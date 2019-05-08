@@ -27,7 +27,7 @@ public class Controllers
 
         float mousePrevPos = 0.0f;
 
-        FloatingJoystick stick = null;
+        Joystick stick = null;
 
         public override void Start(Ship p)
         {
@@ -39,7 +39,7 @@ public class Controllers
             ship.SetMainText("");
             mousePrevPos = Input.mousePosition.x;
 
-            stick = GameObject.Find("stick").GetComponent<FloatingJoystick>();
+            stick = GameObject.Find("stickFixed").GetComponent<FixedJoystick>();
  
         }
 
@@ -57,21 +57,17 @@ public class Controllers
              * * */
 
             //do the rotation
-            float rotate = (mousePrevPos - Input.mousePosition.x);
+            float rotate = 0.0f; //(mousePrevPos - Input.mousePosition.x);
             Vector2 sd = stick.Direction;
-            float deadZoneStick = 0.2f;
-            if (sd.x < -deadZoneStick || Input.GetKey(KeyCode.A))
-            {
-                rotate = 4.0f;
-            }
-            if (sd.x > deadZoneStick || Input.GetKey(KeyCode.D))
-            {
-                rotate = -4.0f;
-            }
+
+            float stickx = Mathf.Abs(sd.x) * sd.x;
+            float sticky = sd.y;
+
+            rotate = -70.0f * stickx * dt;
 
             rotSpeed += rotate;
 
-            float maxRotSpeed = 30.0f;
+            float maxRotSpeed = 160.0f;
             if (rotSpeed > maxRotSpeed)
                 rotSpeed = maxRotSpeed;
             if (rotSpeed < -maxRotSpeed)
@@ -89,9 +85,9 @@ public class Controllers
 
             //the up force
             float forceMul = 0.0f;
-            if (sd.y > deadZoneStick || Input.GetKey(KeyCode.W))
+            if (sticky > 0.01f)// || Input.GetKey(KeyCode.W))
             {
-                forceMul = 0.5f;
+                forceMul = 0.5f* sticky;
             }
 
             Vector2 force = ship.transform.rotation * Vector2.up * forceMul;

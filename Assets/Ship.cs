@@ -57,7 +57,7 @@ public class Ship : MonoBehaviour
     {
         body.AddForce(force);
         ParticleSystem.EmissionModule m = flame.emission;
-        m.enabled = (force.SqrMagnitude()) > 0.1f;
+        m.enabled = (force.SqrMagnitude()) > 0.05f;
 
 
 
